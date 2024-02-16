@@ -1,0 +1,29 @@
+name: CI
+on: push
+
+jobs:
+  lint-and-check-types:
+    name: Lint and check types
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_GIT_HUB_API: github-graphql-api-fall-2023-atvie
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 'latest'
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build Next.js app (types needed for TSC and ESLint)
+        run: pnpm build
+      - name: Check TypeScript Types
+        run: pnpm tsc
+      - name: Lint with ESLint
+        run: pnpm eslint . --max-warnings 0
+      - name: Lint with Stylelint
+        run: pnpm stylelint '**/*.{css,scss,less,js,tsx}'
